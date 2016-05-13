@@ -14,6 +14,8 @@
 unsigned window_width = 800;
 unsigned window_height = 600;
 
+float rotation = 0;
+
 xcb_connection_t *connection;
 xcb_screen_t *screen;
 
@@ -35,7 +37,8 @@ create_window() {
 
         mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
         values[0] = screen->white_pixel;
-        values[1] = XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_KEY_PRESS;
+        values[1] = XCB_EVENT_MASK_EXPOSURE
+                | XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_BUTTON_1_MOTION;
 
         window = xcb_generate_id(connection);
         cookie = xcb_create_window(connection,
@@ -126,7 +129,7 @@ drawlineXD(unsigned char *p, int x0, int y0, int x1, int y1, int width) {
 xcb_image_t *
 CreateTrueColorImage(xcb_connection_t *c, int width, int height) {
         const xcb_setup_t *setup = xcb_get_setup(c);
-        unsigned char *image32=(unsigned char *)malloc(width*height*4);
+        unsigned char *image32 = (unsigned char *)malloc(width*height*4);
         xcb_format_t *fmt = find_format(c, 24, 32);
         if (fmt == NULL)
                 return NULL;
@@ -149,9 +152,20 @@ CreateTrueColorImage(xcb_connection_t *c, int width, int height) {
 }
 
 
+#define CLEANMASK(mask) (mask & ~(XCB_MOD_MASK_LOCK))
+
+#define KEY_LEFT 100
+#define KEY_RIGHT 102
+#define KEY_ESC 9
+
+void redraw(unsigned char *p, float angle);
+
 void
 event_loop(xcb_window_t window, xcb_gcontext_t graphics_context, xcb_pixmap_t pixmap) {
         xcb_generic_event_t *event;
+
+        xcb_keysym_t *keysym;
+        xcb_key_press_event_t *press;
 
         while((event = xcb_wait_for_event(connection))) {
                 switch(event->response_type) {
@@ -163,11 +177,32 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context, xcb_pixmap_t pi
                         );
                         xcb_flush(connection);
                         break;
-                        case XCB_KEY_PRESS:
+
+                        case XCB_MOTION_NOTIFY:
                         return;
+
+                        case XCB_KEY_PRESS:
+                        press = (xcb_key_press_event_t *)event;
+                        switch(press->detail) {
+                                case KEY_LEFT:
+                                rotation += 0.01;
+                                break;
+                                case KEY_RIGHT:
+                                rotation -= 0.01;
+                                break;
+                                case 27:
+                                redraw(image->data, rotation);
+                                break;
+                                case KEY_ESC:
+                                return;
+                                default:
+                                debug("xcb: keypress : %d\n", press->detail);
+                        }
                 }
         }
 }
+
+
 
 int main(void) {
         xcb_window_t window;

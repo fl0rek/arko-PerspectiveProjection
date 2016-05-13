@@ -1,5 +1,4 @@
 #include "util/matUtil.c"
-#include <cairo.h>
 
 #include <fdebug.h>
 
@@ -45,27 +44,6 @@ void fromUniformCoords(float *xy, int *rxy) {
         rxy[1] = ((xy[1]+1) * h)/2;
 }
 
-
-void drawLine(cairo_t *cr, float *ufrom, float *uto) {
-        cairo_set_source_rgb(cr, 100,0,0);
-        cairo_set_line_width(cr, 0.5);
-
-        debug("from\t:%f, %f", ufrom[0], ufrom[1]);
-        debug("to\t:%f, %f", uto[0], uto[1]);
-
-        int from[2];
-        int to[2];
-
-        fromUniformCoords(ufrom, from);
-        fromUniformCoords(uto, to);
-
-        cairo_move_to(cr, from[0], from[1]);
-        cairo_line_to(cr, to[0], to[1]);
-
-        cairo_stroke(cr);
-}
-
-
 void transformPoint(const float* origin, float* dest) {
         memcpy(dest, origin, 4*sizeof(float));
 
@@ -85,7 +63,7 @@ unsigned scale(float v, unsigned max) {
         return ((v+1)*max)/2;
 }
 
-void drawlineI(unsigned char *p, float* ufrom, float *uto) {
+void drawLineI(unsigned char *p, float* ufrom, float *uto) {
         int from[2];
         int to[2];
 
@@ -106,6 +84,7 @@ void redraw(unsigned char *p, float angle) {
 
 }
 
+#if 0
 int main1(int argc, char const *argv[]) {
         // INIT
         cairo_surface_t *surface  =
@@ -155,3 +134,4 @@ int main1(int argc, char const *argv[]) {
         cairo_surface_destroy(surface);
         return 0;
 }
+#endif
