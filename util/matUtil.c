@@ -79,16 +79,26 @@ void doTranslationMatrix(float x, float y, float z, float* m) {
 	dumpMatrix(m);
 }
 
-void doRotationMatrix1(float degree, float *m) {
+void doRotationMatrixY(float degree, float *m) {
 	memset(m, 0, 16 *sizeof(*m));
+
+	setIdentityMatrix(m, 4);
 
 	m[0] = cos(degree);
 	m[2] = sin(degree);
-	m[4] = 0;
-	m[5] = 1;
 	m[8] = -sin(degree);
 	m[10] = cos(degree);
-	m[15] = 1;
+}
+
+void doRotationMatrixX(float degree, float *m) {
+	memset(m, 0, 16 *sizeof(*m));
+
+	setIdentityMatrix(m, 4);
+
+	m[5] = cos(degree);
+	m[6] = -sin(degree);
+	m[9] = sin(degree);
+	m[10] = cos(degree);
 }
 
 float viewMatrix[16];

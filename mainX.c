@@ -14,7 +14,8 @@
 unsigned window_width = 800;
 unsigned window_height = 600;
 
-float rotation = 0;
+float rotationY = 0;
+float rotationX = 0;
 
 xcb_connection_t *connection;
 xcb_screen_t *screen;
@@ -157,9 +158,11 @@ CreateTrueColorImage(xcb_connection_t *c, int width, int height) {
 
 #define KEY_LEFT 100
 #define KEY_RIGHT 102
+#define KEY_UP 98
+#define KEY_DOWN 104
+
 #define KEY_ESC 9
 
-void redraw(unsigned char *p, float angle);
 
 void
 event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
@@ -187,22 +190,35 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
                         press = (xcb_key_press_event_t *)event;
                         switch(press->detail) {
                                 case KEY_LEFT:
-                                rotation += 0.05;
+                                rotationY += 0.05;
                                 clear();
                                 redrawWrapper(graphics_context, window);
                                 break;
 
                                 case KEY_RIGHT:
-                                rotation -= 0.05;
+                                rotationY -= 0.05;
                                 clear();
                                 redrawWrapper(graphics_context, window);
                                 break;
 
                                 case 27:
                                 clear();
-                                rotation = 0;
+                                rotationX = 0;
+                                rotationY = 0;
                                 redrawWrapper(graphics_context, window);
                                 debug("redraw");
+                                break;
+
+                                case KEY_DOWN:
+                                clear();
+                                rotationX -= 0.05;
+                                redrawWrapper(graphics_context, window);
+                                break;
+
+                                case KEY_UP:
+                                clear();
+                                rotationX += 0.05;
+                                redrawWrapper(graphics_context, window);
                                 break;
 
                                 case KEY_ESC:
@@ -216,10 +232,10 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
         }
 }
 
+void redraw(unsigned char *p, float angleX, float angleY);
 
 void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window) {
-        memset(image->data, 0, 10000);
-        redraw(image->data, rotation);
+        redraw(image->data, rotationX, rotationY);
 
         xcb_image_put(connection, pixmap, graphics_context, image, 0, 0, 0);
 

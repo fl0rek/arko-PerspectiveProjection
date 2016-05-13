@@ -110,7 +110,7 @@ void dumpMatrix(float *m) {
         );
 }
 
-void redraw(unsigned char *p, float angle) {
+void redraw(unsigned char *p, float angleX, float angleY) {
         drawLineI(p, &testSquare[0], &testSquare[2]);
         drawLineI(p, &testSquare[2], &testSquare[4]);
         drawLineI(p, &testSquare[4], &testSquare[6]);
@@ -121,14 +121,16 @@ void redraw(unsigned char *p, float angle) {
         memcpy(projectionMatrix, projectionMatrixOriginal, 16*sizeof(float));
         dumpMatrix(projectionMatrix);
 
-        doTranslationMatrix(0, 0, -5, tmp);
+        doTranslationMatrix(0, 0, -3, tmp);
         dumpMatrix(tmp);
         multMatrix(projectionMatrix, tmp);
 
         dumpMatrix(projectionMatrix);
 
-        doRotationMatrix1(angle, tmp);
-        debug("rotation matrix:");
+        doRotationMatrixY(angleY, tmp);
+        multMatrix(projectionMatrix, tmp);
+
+        doRotationMatrixX(angleX, tmp);
         multMatrix(projectionMatrix, tmp);
 
         dumpMatrix(projectionMatrix);
