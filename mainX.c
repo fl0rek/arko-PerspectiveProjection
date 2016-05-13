@@ -18,6 +18,7 @@ float rotation = 0;
 
 xcb_connection_t *connection;
 xcb_screen_t *screen;
+xcb_pixmap_t pixmap;
 
 xcb_image_t *image;
 
@@ -161,7 +162,8 @@ CreateTrueColorImage(xcb_connection_t *c, int width, int height) {
 void redraw(unsigned char *p, float angle);
 
 void
-event_loop(xcb_window_t window, xcb_gcontext_t graphics_context, xcb_pixmap_t pixmap) {
+event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
+                xcb_pixmap_t pixmap) {
         xcb_generic_event_t *event;
 
         xcb_keysym_t *keysym;
@@ -185,16 +187,28 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context, xcb_pixmap_t pi
                         press = (xcb_key_press_event_t *)event;
                         switch(press->detail) {
                                 case KEY_LEFT:
-                                rotation += 0.01;
+                                rotation += 0.05;
+                                clear();
+                                redrawWrapper(graphics_context, window);
                                 break;
+
                                 case KEY_RIGHT:
-                                rotation -= 0.01;
+                                rotation -= 0.05;
+                                clear();
+                                redrawWrapper(graphics_context, window);
                                 break;
+
                                 case 27:
-                                redraw(image->data, rotation);
+                                clear();
+                                rotation = 0;
+                                redrawWrapper(graphics_context, window);
+                                debug("redraw");
                                 break;
+
                                 case KEY_ESC:
+                                case 25:
                                 return;
+
                                 default:
                                 debug("xcb: keypress : %d\n", press->detail);
                         }
@@ -203,11 +217,28 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context, xcb_pixmap_t pi
 }
 
 
+void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window) {
+        memset(image->data, 0, 10000);
+        redraw(image->data, rotation);
+
+        xcb_image_put(connection, pixmap, graphics_context, image, 0, 0, 0);
+
+        xcb_copy_area(connection,
+                pixmap, window, graphics_context,
+                0, 0, 0, 0,
+                window_width, window_height
+        );
+        xcb_flush(connection);
+}
+
+
+void clear() {
+        fillimage(image->data, window_width, window_height);
+}
 
 int main(void) {
         xcb_window_t window;
         xcb_gcontext_t graphics_context;
-        xcb_pixmap_t pixmap;
 
         connection = xcb_connect(NULL, NULL); // Callers need to use xcb_connection_has_error() to check for failure.
         screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;

@@ -34,9 +34,9 @@ void multMatrix(float *a, float *b) {
 
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
-			res[j*4 + i] = 0.0f;
+			res[j*4 + i] = .0f;
 			for (int k = 0; k < 4; ++k) {
-				res[j*4 + i] += a[k + i*4] * b[j + k*4];
+				res[j*4 + i] += a[k + j*4] * b[i + k*4];
 			}
 		}
 	}
@@ -66,24 +66,25 @@ void normalizeTo3d(float *v) {
 
         debug("n: %f, %f, %f, %f", v[0], v[1], v[2], v[3]);
 }
-
+void dumpMatrix(float *m);
 void doTranslationMatrix(float x, float y, float z, float* m) {
-	memset(m, 0, 16);
-	m[0] = 1;
-	m[5] = 1;
-	m[10] = 1;
-	m[15] = 1;
+	memset(m, 0, 16 *sizeof(*m));
+
+	setIdentityMatrix(m, 4);
 
 	m[3] = x;
 	m[7] = y;
 	m[11] = z;
+	debug("should be I(4)");
+	dumpMatrix(m);
 }
 
 void doRotationMatrix1(float degree, float *m) {
-	memset(m, 0, 16);
+	memset(m, 0, 16 *sizeof(*m));
 
 	m[0] = cos(degree);
 	m[2] = sin(degree);
+	m[4] = 0;
 	m[5] = 1;
 	m[8] = -sin(degree);
 	m[10] = cos(degree);

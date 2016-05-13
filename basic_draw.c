@@ -2,25 +2,44 @@
 
 #include <fdebug.h>
 
-float vertices[] = {
+float vertices1[] = {
         -1.f, -.2f, -1.f,  1.f,
          1.f, -.2f, -1.f,  1.f,
-         0.f, -.2f,  1.f,  1.f,
+         0.f, -.2f,  1.82842712, 1.f,
          0.f, .8f,  0.f,  1.f
+};
+
+float vertices[] = {
+         1.f, -1.f,  1.f, 1.f,
+        -1.f, -1.f, -1.f, 1.f,
+        -1.f,  1.f,  1.f, 1.f,
+         1.f,  1.f, -1.f, 1.f
 };
 
 float projectedVertices[16];
 
 const float distance = 3;
 
-float projectionMatrix[] = {
+float projectionMatrixOriginal[] = {
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
         0, 0, -.5f, 1 // -1/distance
 };
+float projectionMatrix[16];
 
 int lines[] = {
+        0, 1,
+        0, 2,
+        0, 3,
+
+        1, 2,
+        1, 3,
+
+        2, 3
+};
+
+int lines1[] = {
         0, 1,
         1, 2,
         2, 0,
@@ -60,6 +79,14 @@ extern unsigned window_width;
 extern unsigned window_height;
 
 unsigned scale(float v, unsigned max) {
+        if(v < -1) {
+                v = -1;
+                debug("< -1");
+        }
+        if(v > 1) {
+                v = 1;
+                debug(">  1");
+        }
         return ((v+1)*max)/2;
 }
 
@@ -76,12 +103,48 @@ void drawLineI(unsigned char *p, float* ufrom, float *uto) {
         drawlineXD(p, from[0], from[1], to[0], to[1], window_width);
 }
 
+void dumpMatrix(float *m) {
+        debug("\n%5.3f %5.3f %5.3f %5.3f\n%5.3f %5.3f %5.3f %5.3f\n%5.3f %5.3f %5.3f %5.3f\n%5.3f %5.3f %5.3f %5.3f\n",
+        m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10],
+        m[11], m[12], m[13], m[14], m[15]
+        );
+}
+
 void redraw(unsigned char *p, float angle) {
         drawLineI(p, &testSquare[0], &testSquare[2]);
         drawLineI(p, &testSquare[2], &testSquare[4]);
         drawLineI(p, &testSquare[4], &testSquare[6]);
         drawLineI(p, &testSquare[6], &testSquare[0]);
 
+        float tmp[16];
+
+        memcpy(projectionMatrix, projectionMatrixOriginal, 16*sizeof(float));
+        dumpMatrix(projectionMatrix);
+
+        doTranslationMatrix(0, 0, -5, tmp);
+        dumpMatrix(tmp);
+        multMatrix(projectionMatrix, tmp);
+
+        dumpMatrix(projectionMatrix);
+
+        doRotationMatrix1(angle, tmp);
+        debug("rotation matrix:");
+        multMatrix(projectionMatrix, tmp);
+
+        dumpMatrix(projectionMatrix);
+
+        for (size_t i = 0; i < 4; i++) {
+                debug("%f", vertices[i*4]);
+                transformPoint(&vertices[i *4], &projectedVertices[i *4]);
+                normalizeTo3d(&projectedVertices[i *4]);
+        }
+
+        for (size_t i = 0; i < 6; i++) {
+                drawLineI(p,
+                        &projectedVertices[lines[i *2] *4],
+                        &projectedVertices[lines[i *2 +1] *4]
+                );
+        }
 }
 
 #if 0

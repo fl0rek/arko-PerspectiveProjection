@@ -1,8 +1,8 @@
 CC = cc
 CWARNINGS = -Wall -Wextra -Wpedantic
 INCLUDES = -I$(HOME)/dev/fstdlib/
-LDFLAGS = `pkg-config --libs xcb xcb-image` -lm
-CFLAGS = -std=c11 $(CWARNINGS) $(INCLUDES)
+LDFLAGS = `pkg-config --libs xcb xcb-image` -lm -g
+CFLAGS = -std=c11 $(CWARNINGS) $(INCLUDES) -g
 OBJFILES = mainX.o basic_draw.o
 
 mainx: $(OBJFILES)
