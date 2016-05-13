@@ -81,11 +81,11 @@ extern unsigned window_height;
 unsigned scale(float v, unsigned max) {
         if(v < -1) {
                 v = -1;
-                debug("< -1");
+                debug1("< -1");
         }
         if(v > 1) {
                 v = 1;
-                debug(">  1");
+                debug1(">  1");
         }
         return ((v+1)*max)/2;
 }
@@ -148,55 +148,3 @@ void redraw(unsigned char *p, float angleX, float angleY) {
                 );
         }
 }
-
-#if 0
-int main1(int argc, char const *argv[]) {
-        // INIT
-        cairo_surface_t *surface  =
-                cairo_image_surface_create(CAIRO_FORMAT_RGB24, w, h);
-        cairo_t *cr = cairo_create(surface);
-
-        log_info("init done");
-
-        cairo_save(cr);
-        cairo_set_source_rgb(cr, 100, 100, 0);
-        cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
-        cairo_paint(cr);
-        cairo_restore(cr);
-
-        // DRAW LINE
-        drawLine(cr, &testSquare[0], &testSquare[2]);
-        drawLine(cr, &testSquare[2], &testSquare[4]);
-        drawLine(cr, &testSquare[4], &testSquare[6]);
-        drawLine(cr, &testSquare[6], &testSquare[0]);
-
-        float tmp[16];
-        doRotationMatrix1(.0, tmp);
-        multMatrix(projectionMatrix, tmp);
-        doTranslationMatrix(0, 0, 5, tmp);
-        multMatrix(projectionMatrix, tmp);
-
-
-        //multMatrix(rot, projectionMatrix);
-        //memcpy(projectionMatrix, rot, 16);
-
-        for (size_t i = 0; i < 4; i++) {
-                debug("%f", vertices[i*4]);
-                transformPoint(&vertices[i *4], &projectedVertices[i *4]);
-                normalizeTo3d(&projectedVertices[i *4]);
-        }
-
-        for (size_t i = 0; i < 6; i++) {
-                drawLine(cr,
-                        &projectedVertices[lines[i *2] *4],
-                        &projectedVertices[lines[i *2 +1] *4]
-                );
-        }
-
-        // CLEANUP
-        cairo_destroy(cr);
-        cairo_surface_write_to_png(surface, "test0.png");
-        cairo_surface_destroy(surface);
-        return 0;
-}
-#endif

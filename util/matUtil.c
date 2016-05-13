@@ -51,7 +51,7 @@ void multVector(float *v, float *m) {
 			debug("+= %f * %f", v[j], m[i*4 + j]);
 			res[i] += v[j] * m[i*4 + j];
 		}
-		debug("");
+		debug1("");
 	}
 //        debug("r: %f, %f, %f, %f", res[0], res[1], res[2], res[3]);
 	memcpy(v, res, 4*sizeof(*v));
@@ -75,7 +75,7 @@ void doTranslationMatrix(float x, float y, float z, float* m) {
 	m[3] = x;
 	m[7] = y;
 	m[11] = z;
-	debug("should be I(4)");
+	debug1("should be I(4)");
 	dumpMatrix(m);
 }
 

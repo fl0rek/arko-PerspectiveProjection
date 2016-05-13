@@ -23,6 +23,9 @@ xcb_pixmap_t pixmap;
 
 xcb_image_t *image;
 
+void clear(void);
+void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window);
+
 xcb_window_t
 create_window() {
         // http://www.x.org/releases/current/doc/xproto/x11protocol.html#requests:CreateWindow
@@ -51,6 +54,8 @@ create_window() {
                 screen->root_visual,
                 mask, values
         );
+
+        UNUSED(cookie);
 
         xcb_map_window(connection, window);
         return window;
@@ -169,7 +174,6 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
                 xcb_pixmap_t pixmap) {
         xcb_generic_event_t *event;
 
-        xcb_keysym_t *keysym;
         xcb_key_press_event_t *press;
 
         while((event = xcb_wait_for_event(connection))) {
@@ -206,7 +210,7 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
                                 rotationX = 0;
                                 rotationY = 0;
                                 redrawWrapper(graphics_context, window);
-                                debug("redraw");
+                                debug1("redraw");
                                 break;
 
                                 case KEY_DOWN:
@@ -248,7 +252,7 @@ void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window) {
 }
 
 
-void clear() {
+void clear(void) {
         fillimage(image->data, window_width, window_height);
 }
 
@@ -277,7 +281,7 @@ int main(void) {
 
         event_loop(window, graphics_context, pixmap);
 
-        log_info("bye!");
+        log_info1("bye!");
 
         return EXIT_SUCCESS;
 }
