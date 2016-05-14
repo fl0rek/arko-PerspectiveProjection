@@ -2,21 +2,26 @@ CC = cc
 ASM = nasm
 LD = ld
 
-CWARNINGS = -Wall -Wextra -Wpedantic
+CWARNINGS = -Wall -Wextra -Wpedantic -Wno-trigraphs
 INCLUDES = -I$(HOME)/dev/fstdlib/
 
 LDFLAGS = `pkg-config --libs xcb xcb-image` -lm -g
-CFLAGS = -std=c11 $(CWARNINGS) $(INCLUDES) -g
+CFLAGS = -std=c11 $(CWARNINGS) $(INCLUDES) -g -trigraphs
 
 NASMFLAGS = -felf64 -F dwarf -g
 
-#ASMOBJFILES = multMatrix.o multVector.o normalizeTo3d.o doRotationMatrix.o setIdentityMatrix.o doTranslationMatrix.o
+ASMFILES = $(wildcard asm/*.asm)
+OBJASMFILES = $(patsubst asm/%.asm,asm/%.o,$(ASMFILES))
 OBJFILES = mainX.o basic_draw.o asmUtil.o
 
-mainx: $(OBJFILES) asmT
+mainx: $(OBJFILES) asmUtil.o
 	$(CC) $(LDFLAGS) $(OBJFILES) -o $@
 
-asmUtil.o: asm/*.o
+regressionTest: regressionTest.c asmUtil.o
+	$(CC) $(CFLAGS) $^ -lm -g -o $@
+	./regressionTest
+
+asmUtil.o: $(OBJASMFILES)
 	$(LD) $^ -r -o $@
 
 %.o: %.c
@@ -26,8 +31,8 @@ asm/%.o: asm/%.asm
 	$(ASM) $(NASMFLAGS) $<
 
 clean:
-	rm -f mainx
+	rm -f mainx regressionTest
 	rm -f *.o
 	rm -f asm/*.o
 
-.PHONY: clean asmT
+.PHONY: clean regressionTest

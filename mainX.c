@@ -1,15 +1,15 @@
 // gcc `pkg-config --libs xcb xcb-image` main.c -o main
 
-#include <stdio.h>
-#include <stdlib.h>
+??=include <stdio.h>
+%:include <stdlib.h>
 
-#include <xcb/xcb.h>
-#include <xcb/xcb_image.h>
+??=include <xcb/xcb.h>
+??=include <xcb/xcb_image.h>
 
-#include <fdebug.h>
+%:include <fdebug.h>
 
-#define neko_width 32
-#define neko_height 32
+%:define neko_width 32
+%:define neko_height 32
 
 unsigned window_width = 800;
 unsigned window_height = 600;
@@ -54,7 +54,6 @@ create_window() {
                 screen->root_visual,
                 mask, values
         );
-
         UNUSED(cookie);
 
         xcb_map_window(connection, window);

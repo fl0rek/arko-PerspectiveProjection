@@ -58,13 +58,10 @@ void multVector(float *v, float *m) {
 }
 
 void normalizeTo3d(float *v) {
-        debug("p: %f, %f, %f, %f", v[0], v[1], v[2], v[3]);
 	v[0] = v[0]/v[3];
 	v[1] = v[1]/v[3];
 	v[2] = v[2]/v[3];
 	v[3] = 1;
-
-        debug("n: %f, %f, %f, %f", v[0], v[1], v[2], v[3]);
 }
 void dumpMatrix(float *m);
 void doTranslationMatrix(float x, float y, float z, float* m) {
@@ -75,8 +72,6 @@ void doTranslationMatrix(float x, float y, float z, float* m) {
 	m[3] = x;
 	m[7] = y;
 	m[11] = z;
-	debug1("should be I(4)");
-	dumpMatrix(m);
 }
 
 void doRotationMatrixY(float degree, float *m) {
