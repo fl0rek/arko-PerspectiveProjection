@@ -8,8 +8,9 @@ a_normalizeTo3d:
         ; RDI - size [ignored]
 
         movups  xmm0, [rdi]
-        movshdup xmm1, xmm0
-        movddup  xmm1, xmm1
+        pshufd  xmm1, xmm0, 0
+        ;movshdup xmm1, xmm0
+        ;movddup  xmm1, xmm1
         divps   xmm0, xmm1
         movups  [rdi], xmm0
         ret

@@ -8,6 +8,13 @@ void dumpMatrix(float *m) {
         );
 }
 
+void dumpVector(float *v1) {
+        debug("\n%5.3f %5.3f %5.3f %5.3f",
+                v1[0], v1[1], v1[2], v1[3]
+        );
+
+}
+
 int cmp_x(float* lhs, float* rhs, size_t count) {
         for(size_t i = 0; i < count; i++)
                 if(lhs[i] != rhs[i])
@@ -40,7 +47,7 @@ int main() {
 
         float chv[4] = {8.f, 4.f, 2.f, 2.f};
         float ahv[4] = {8.f, 4.f, 2.f, 2.f};
-        
+
         normalizeTo3d(chv);
         a_normalizeTo3d(ahv);
         check1(!cmp_vec(ahv, chv), "normalizeTo3d");
@@ -48,6 +55,10 @@ int main() {
         log_info1("done");
         return 0;
 error:
+
+        dumpVector(chv);
+        dumpVector(ahv);
+
         dumpMatrix(chs);
         dumpMatrix(ahs);
         log_info1("done with errors");
