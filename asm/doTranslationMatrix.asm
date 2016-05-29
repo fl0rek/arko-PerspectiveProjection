@@ -9,7 +9,6 @@ a_doTranslationMatrix:
         ; xmm1 - y
         ; xmm2 - z
 
-
         mov     [rdi+0],  dword __float32__(1.0)
         mov     [rdi+4],  dword __float32__(0.0)
         mov     [rdi+8],  dword __float32__(0.0)
@@ -30,3 +29,6 @@ a_doTranslationMatrix:
         mov     [rdi+56], dword __float32__(0.0)
         mov     [rdi+60], dword __float32__(1.0)
         ret
+
+global a_doTranslationMatrix_loaded
+a_doTranslationMatrix_loaded:

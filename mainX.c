@@ -119,6 +119,7 @@ void putpixel(unsigned char *p, int x, int y, int width) {
 
 void
 drawlineXD(unsigned char *p, int x0, int y0, int x1, int y1, int width) {
+        debug("(%d, %d) -> (%d, %d)", x0, y0, x1, y1);
         const unsigned resolution = 1000;
         float delta = 1.0/resolution;
         int dx = x1 - x0;
@@ -160,10 +161,10 @@ CreateTrueColorImage(xcb_connection_t *c, int width, int height) {
 
 #define CLEANMASK(mask) (mask & ~(XCB_MOD_MASK_LOCK))
 
-#define KEY_LEFT 100
-#define KEY_RIGHT 102
-#define KEY_UP 98
-#define KEY_DOWN 104
+#define KEY_LEFT 38
+#define KEY_RIGHT 40
+#define KEY_UP 25
+#define KEY_DOWN 39
 
 #define KEY_ESC 9
 
@@ -225,7 +226,7 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
                                 break;
 
                                 case KEY_ESC:
-                                case 25:
+                                case 24:
                                 return;
 
                                 default:
@@ -236,9 +237,11 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
 }
 
 void redraw(unsigned char *p, float angleX, float angleY);
+void sa_redraw(unsigned char *p, float angleX, float angleY);
+void a_redraw(unsigned char *p, float angleX, float angleY);
 
 void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window) {
-        redraw(image->data, rotationX, rotationY);
+        a_redraw(image->data, rotationX, rotationY);
 
         xcb_image_put(connection, pixmap, graphics_context, image, 0, 0, 0);
 

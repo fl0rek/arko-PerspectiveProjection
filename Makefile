@@ -11,7 +11,7 @@ CFLAGS = -std=c11 $(CWARNINGS) $(INCLUDES) -g -trigraphs
 NASMFLAGS = -felf64 -F dwarf -g
 
 ASMFILES = $(wildcard asm/*.asm)
-OBJASMFILES = $(patsubst asm/%.asm,asm/%.o,$(ASMFILES))
+OBJASMFILES = $(patsubst asm/%.asm,asm/%.o,$(ASMFILES)) a_draw.o
 OBJFILES = mainX.o basic_draw.o asmUtil.o
 
 mainx: $(OBJFILES) asmUtil.o
@@ -20,6 +20,12 @@ mainx: $(OBJFILES) asmUtil.o
 regressionTest: regressionTest.c asmUtil.o
 	$(CC) $(CFLAGS) $^ -lm -g -o $@
 	./regressionTest
+
+ham: ham.o
+	$(CC) $< -o $@
+
+a_draw.o: draw.asm
+	$(ASM) $(NASMFLAGS) $< -o a_draw.o
 
 asmUtil.o: $(OBJASMFILES)
 	$(LD) $^ -r -o $@

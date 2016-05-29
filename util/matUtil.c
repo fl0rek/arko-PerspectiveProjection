@@ -97,7 +97,7 @@ void doRotationMatrixX(float degree, float *m) {
 }
 
 float viewMatrix[16];
-float projMatrix[16];
+static float projMatrix[16];
 
 void buildProjectionMatrix(float fov, float ratio, float nearP, float farP) {
 
@@ -111,6 +111,28 @@ void buildProjectionMatrix(float fov, float ratio, float nearP, float farP) {
 	projMatrix[3 * 4 + 2] = (2.0f * farP * nearP) / (nearP - farP);
 	projMatrix[2 * 4 + 3] = -1.0f;
 	projMatrix[3 * 4 + 3] = 0.0f;
+}
+
+void transpose(float *m) {
+	float tmp[16];
+	tmp[0]  = m[0];  // argv[1],
+	tmp[1]  = m[4];  // argv[5],
+	tmp[2]  = m[8];  // argv[9],
+	tmp[3]  = m[12]; // argv[13],
+	tmp[4]  = m[1];  // argv[2],
+	tmp[5]  = m[5];  // argv[6],
+	tmp[6]  = m[9];  // argv[10],
+	tmp[7]  = m[13]; // argv[14],
+	tmp[8]  = m[2];  // argv[3],
+	tmp[9]  = m[6];  // argv[7],
+	tmp[10] = m[10]; // argv[11],
+	tmp[11] = m[14]; // argv[15],
+	tmp[12] = m[3];  // argv[4],
+	tmp[13] = m[7];  // argv[8],
+	tmp[14] = m[11]; // argv[12],
+	tmp[15] = m[15]; // argv[16]
+
+	memcpy(m, tmp, 16*sizeof(float));
 }
 
 // ----------------------------------------------------

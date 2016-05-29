@@ -10,3 +10,5 @@ void a_doTranslationMatrix(float x, float y, float z, float* m);
 
 void a_doRotationMatrixY(float degree, float *m);
 void a_doRotationMatrixX(float degree, float *m);
+
+void a_transpose(float *m);
