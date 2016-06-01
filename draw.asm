@@ -148,7 +148,8 @@ extern a_drawLineI
 extern drawLineI
         call    a_drawLineI
 
-        cmp     rbx, 0
+        ;cmp     rbx, 0
+        test    rbx, rbx
         jnz     lines_draw
 lines_draw_done:
 

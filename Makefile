@@ -1,6 +1,6 @@
 CC = cc
 ASM = nasm
-LD = ld
+LD = ld.bfd
 
 CWARNINGS = -Wall -Wextra -Wpedantic -Wno-trigraphs
 INCLUDES = -I$(HOME)/dev/fstdlib/
@@ -20,7 +20,7 @@ mainx: $(OBJFILES) asmUtil.o
 	$(CC) $(LDFLAGS) $(CFLAGS) $(OBJFILES) -o $@
 
 regressionTest: regressionTest.c asmUtil.o
-	$(CC) $(CFLAGS) $^ -lm -g -o $@
+	$(CC) $(CFLAGS) $^ -lm -o $@
 	./regressionTest
 
 ham: ham.o
@@ -42,5 +42,6 @@ clean:
 	rm -f mainx regressionTest
 	rm -f *.o
 	rm -f asm/*.o
+	rm -f util/*.o
 
 .PHONY: clean regressionTest

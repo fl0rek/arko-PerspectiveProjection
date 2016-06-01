@@ -41,7 +41,3 @@ a_multVector_loaded:
         movups          [rdi], xmm2
 
         ret
-
-;%macro transposition 1
-;        mov     xmm0, %1
-;        punpckldq
