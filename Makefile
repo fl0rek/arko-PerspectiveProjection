@@ -15,7 +15,7 @@ OBJASMFILES = $(patsubst asm/%.asm,asm/%.o,$(ASMFILES)) a_draw.o
 OBJFILES = mainX.o basic_draw.o asmUtil.o
 
 mainx: $(OBJFILES) asmUtil.o
-	$(CC) $(LDFLAGS) $(OBJFILES) -o $@
+	$(CC) $(LDFLAGS) $(CFLAGS) $(OBJFILES) -o $@
 
 regressionTest: regressionTest.c asmUtil.o
 	$(CC) $(CFLAGS) $^ -lm -g -o $@

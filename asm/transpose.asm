@@ -34,7 +34,7 @@ foo:
         ;movaps          xmm15, xmm8
         ;punpckhdq       xmm15, xmm10
 
-        vpunpcklqdq     xmm12, xmm0, xmm1
+        vpunpcklqdq      xmm12, xmm0, xmm1
         vpunpckhqdq      xmm13, xmm0, xmm1
         vpunpcklqdq      xmm14, xmm2, xmm3
         vpunpckhqdq      xmm15, xmm2, xmm3

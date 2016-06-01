@@ -120,8 +120,8 @@ lines_draw:
 
         lea     rdi, [lines+rbx*8]
 
-        ;what the actual fuck
-        xor rax, rax
+        ;;what the actual fuck
+        xor     rax, rax
         mov     ax, [rdi]
         mov     r8, rax
         mov     ax, [rdi+4]
@@ -130,15 +130,22 @@ lines_draw:
         shl     r8, 4
         shl     r9, 4
 
-
-        add     r8, a_projectedVertices
-        add     r9, a_projectedVertices
+        ;add     r8, a_projectedVertices
+        ;add     r9, a_projectedVertices
 
         mov     rdi, r12
-        mov     rsi, r8
-        mov     rdx, r9
+dd:     ; p seems to be sane
+
+        ;mov     rsi, r8
+        ;mov     rdx, r9
+        movss   xmm0, [r8+a_projectedVertices]
+        movss   xmm1, [r8+a_projectedVertices+4]
+        movss   xmm2, [r9+a_projectedVertices]
+        movss   xmm3, [r9+a_projectedVertices+4]
+;
+extern a_drawLineI
 extern drawLineI
-        call    drawLineI
+        call    a_drawLineI
 
         cmp     rbx, 0
         jnz     lines_draw

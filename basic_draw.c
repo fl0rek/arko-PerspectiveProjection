@@ -1,5 +1,6 @@
 #include "util/matUtil.c"
 #include "util/asmatUtil.h"
+#include <inttypes.h>
 
 #include <fdebug.h>
 
@@ -78,10 +79,10 @@ void transformPoint(const float* origin, float* dest) {
 void
 drawlineXD(unsigned char *p, int x0, int y0, int x1, int y1, int width);
 
-extern unsigned window_width;
-extern unsigned window_height;
+extern uint64_t window_width_int;
+extern uint64_t window_height_int;
 
-unsigned scale(float v, unsigned max) {
+unsigned scale(float v, uint64_t max) {
         if(v < -1) {
                 v = -1;
                 debug1("< -1");
@@ -99,13 +100,13 @@ void drawLineI(unsigned char *p, float* ufrom, float *uto) {
 
         debug1("I'm beeing called LUL");
 
-        from[0] = scale(ufrom[0], window_width);
-        from[1] = scale(ufrom[1], window_height);
+        from[0] = scale(ufrom[0], window_width_int);
+        from[1] = scale(ufrom[1], window_height_int);
 
-        to[0] = scale(uto[0], window_width);
-        to[1] = scale(uto[1], window_height);
+        to[0] = scale(uto[0], window_width_int);
+        to[1] = scale(uto[1], window_height_int);
 
-        drawlineXD(p, from[0], from[1], to[0], to[1], window_width);
+        drawlineXD(p, from[0], from[1], to[0], to[1], window_width_int);
 }
 
 void dumpMatrix(float *m) {

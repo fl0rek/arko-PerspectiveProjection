@@ -8,11 +8,21 @@
 
 %:include <fdebug.h>
 
+%:include <inttypes.h>
+
 %:define neko_width 32
 %:define neko_height 32
 
-unsigned window_width = 800;
-unsigned window_height = 600;
+%:define WW 800
+%:define WH 800
+
+float window_width = WW;
+float window_height = WH;
+uint64_t window_width_int = WW;
+uint64_t window_height_int = WH;
+
+??=undef WW
+??=undef WH
 
 float rotationY = 0;
 float rotationX = 0;
@@ -22,6 +32,8 @@ xcb_screen_t *screen;
 xcb_pixmap_t pixmap;
 
 xcb_image_t *image;
+
+void * ptr;
 
 void clear(void);
 void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window);
@@ -87,10 +99,9 @@ find_format (xcb_connection_t * c, uint8_t depth, uint8_t bpp) {
         const xcb_setup_t *setup = xcb_get_setup(c);
         xcb_format_t *fmt = xcb_setup_pixmap_formats(setup);
         xcb_format_t *fmtend = fmt + xcb_setup_pixmap_formats_length(setup);
+
         for(; fmt != fmtend; ++fmt)
                 if((fmt->depth == depth) && (fmt->bits_per_pixel == bpp)) {
-                        /* printf("fmt %p has pad %d depth %d, bpp %d\n",
-                        fmt,fmt->scanline_pad, depth,bpp); */
                         return fmt;
                 }
         return 0;
@@ -100,8 +111,8 @@ void fillimage(unsigned char *p, int width, int height) {
         int i, j;
         for(i=0; i < width; i++) {
                 for(j=0; j < height; j++) {
-                        *p++= !(j%100)?0:250; //rand()%256; // blue
-                        *p++= !(i%100)?0:250; //rand()%256; // green
+                        *p++= !(j%10000)?0:250; //rand()%256; // blue
+                        *p++= !(i%10000)?0:250; //rand()%256; // green
                         *p++=250; //rand()%256; // red
 
                         p++; /* unused byte */
@@ -112,6 +123,8 @@ void fillimage(unsigned char *p, int width, int height) {
 void putpixel(unsigned char *p, int x, int y, int width) {
         p += 4* y * width;
         p += 4* x;
+
+        debug("pp at %x", p);
         *(p+0) = 0;
         *(p+1) = 0;
         *(p+2) = 0;
@@ -241,6 +254,7 @@ void sa_redraw(unsigned char *p, float angleX, float angleY);
 void a_redraw(unsigned char *p, float angleX, float angleY);
 
 void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window) {
+        ptr = image->data;
         a_redraw(image->data, rotationX, rotationY);
 
         xcb_image_put(connection, pixmap, graphics_context, image, 0, 0, 0);
@@ -262,7 +276,9 @@ int main(void) {
         xcb_window_t window;
         xcb_gcontext_t graphics_context;
 
-        connection = xcb_connect(NULL, NULL); // Callers need to use xcb_connection_has_error() to check for failure.
+        connection = xcb_connect(NULL, NULL);
+                // Callers need to use xcb_connection_has_error()
+                // to check for failure.
         screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
 
         window = create_window();
@@ -275,7 +291,7 @@ int main(void) {
 
         graphics_context = create_graphics_context(pixmap);
 
-        drawlineXD(image->data, 10, 10, 200, 300, window_width);
+        //drawlineXD(image->data, 10, 10, 200, 300, window_width);
 
         xcb_image_put(connection, pixmap, graphics_context, image, 0, 0, 0);
 
