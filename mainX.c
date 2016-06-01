@@ -10,9 +10,6 @@
 
 %:include <inttypes.h>
 
-%:define neko_width 32
-%:define neko_height 32
-
 %:define WW 800
 %:define WH 800
 
@@ -38,14 +35,7 @@ void * ptr;
 void clear(void);
 void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window);
 
-xcb_window_t
-create_window() {
-        // http://www.x.org/releases/current/doc/xproto/x11protocol.html#requests:CreateWindow
-        // http://www.x.org/archive/current/doc/man/man3/xcb_create_window.3.xhtml
-        //
-        // N.B. xcb's order corresponds to the order of the wire.
-        // You can look at the protocol encoding: http://www.x.org/releases/current/doc/xproto/x11protocol.html#Encoding::Requests
-
+xcb_window_t create_window() {
         uint32_t mask;
         uint32_t values[2];
 
@@ -72,8 +62,7 @@ create_window() {
         return window;
 }
 
-xcb_gcontext_t
-create_graphics_context(xcb_pixmap_t drawable) {
+xcb_gcontext_t create_graphics_context(xcb_pixmap_t drawable) {
         xcb_gcontext_t graphics_context;
 
         uint32_t mask;
@@ -111,20 +100,21 @@ void fillimage(unsigned char *p, int width, int height) {
         int i, j;
         for(i=0; i < width; i++) {
                 for(j=0; j < height; j++) {
-                        *p++= !(j%10000)?0:250; //rand()%256; // blue
-                        *p++= !(i%10000)?0:250; //rand()%256; // green
-                        *p++=250; //rand()%256; // red
-
-                        p++; /* unused byte */
+                        *p++= !(j%10000)?0:250;
+                        *p++= !(i%10000)?0:250;
+                        *p++=250;
+                        p++;
                 }
         }
 }
 
+
 void putpixel(unsigned char *p, int x, int y, int width) {
+        log_warn1("calling c implementation");
         p += 4* y * width;
         p += 4* x;
 
-        debug("pp at %x", p);
+        debug("pp at %p", p);
         *(p+0) = 0;
         *(p+1) = 0;
         *(p+2) = 0;
@@ -132,6 +122,7 @@ void putpixel(unsigned char *p, int x, int y, int width) {
 
 void
 drawlineXD(unsigned char *p, int x0, int y0, int x1, int y1, int width) {
+        log_warn1("calling c implementation");
         debug("(%d, %d) -> (%d, %d)", x0, y0, x1, y1);
         const unsigned resolution = 1000;
         float delta = 1.0/resolution;
@@ -145,6 +136,7 @@ drawlineXD(unsigned char *p, int x0, int y0, int x1, int y1, int width) {
                 );
         }
 }
+
 
 xcb_image_t *
 CreateTrueColorImage(xcb_connection_t *c, int width, int height) {
@@ -243,7 +235,7 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
                                 return;
 
                                 default:
-                                debug("xcb: keypress : %d\n", press->detail);
+                                log_info("unrecognized keypress : %d\n", press->detail);
                         }
                 }
         }
@@ -277,8 +269,7 @@ int main(void) {
         xcb_gcontext_t graphics_context;
 
         connection = xcb_connect(NULL, NULL);
-                // Callers need to use xcb_connection_has_error()
-                // to check for failure.
+
         screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
 
         window = create_window();
@@ -291,11 +282,11 @@ int main(void) {
 
         graphics_context = create_graphics_context(pixmap);
 
-        //drawlineXD(image->data, 10, 10, 200, 300, window_width);
-
         xcb_image_put(connection, pixmap, graphics_context, image, 0, 0, 0);
 
         xcb_flush(connection);
+
+	redrawWrapper(graphics_context, window);
 
         event_loop(window, graphics_context, pixmap);
 

@@ -1,8 +1,10 @@
 #include "util/matUtil.c"
 #include "util/asmatUtil.h"
+
 #include <inttypes.h>
 
 #include <fdebug.h>
+
 
 float vertices1[] = {
         -1.f, -.2f, -1.f,  1.f,
@@ -63,11 +65,13 @@ int w = 480;
 int h = 240;
 
 void fromUniformCoords(float *xy, int *rxy) {
+        log_warn1("calling c implementation");
         rxy[0] = ((xy[0]+1) * w)/2;
         rxy[1] = ((xy[1]+1) * h)/2;
 }
 
 void transformPoint(const float* origin, float* dest) {
+        log_warn1("calling c implementation");
         memcpy(dest, origin, 4*sizeof(float));
 
         a_multVector(dest, projectionMatrix);
@@ -83,6 +87,7 @@ extern uint64_t window_width_int;
 extern uint64_t window_height_int;
 
 unsigned scale(float v, uint64_t max) {
+        log_warn1("calling c implementation");
         if(v < -1) {
                 v = -1;
                 debug1("< -1");
@@ -95,10 +100,9 @@ unsigned scale(float v, uint64_t max) {
 }
 
 void drawLineI(unsigned char *p, float* ufrom, float *uto) {
+        log_warn1("calling c implementation");
         int from[2];
         int to[2];
-
-        debug1("I'm beeing called LUL");
 
         from[0] = scale(ufrom[0], window_width_int);
         from[1] = scale(ufrom[1], window_height_int);
@@ -119,6 +123,8 @@ void dumpMatrix(float *m) {
 void a_redraw(unsigned char *p, float angleX, float angleY);
 
 void sa_redraw(unsigned char *p, float angleX, float angleY) {
+        debug1("I'm beeing called LUL");
+
         drawLineI(p, &testSquare[0], &testSquare[2]);
         drawLineI(p, &testSquare[2], &testSquare[4]);
         drawLineI(p, &testSquare[4], &testSquare[6]);
@@ -160,7 +166,9 @@ void sa_redraw(unsigned char *p, float angleX, float angleY) {
 }
 
 void redraw(unsigned char *p, float angleX, float angleY) {
-        return ;
+
+        debug1("I'm beeing called LUL");
+
         drawLineI(p, &testSquare[0], &testSquare[2]);
         drawLineI(p, &testSquare[2], &testSquare[4]);
         drawLineI(p, &testSquare[4], &testSquare[6]);

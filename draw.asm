@@ -10,7 +10,8 @@ a_tempMatrix:     resb 64
 a_angleX:         resb 4
 a_angleY:         resb 4
 
-a_projectedVertices: resb 64
+;a_projectedVertices: resb 64
+a_projectedVertices: resb 256
 
 section .text
 global a_redraw

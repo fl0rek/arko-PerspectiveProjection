@@ -10,9 +10,11 @@ CFLAGS = -std=c11 $(CWARNINGS) $(INCLUDES) -g -trigraphs
 
 NASMFLAGS = -felf64 -F dwarf -g
 
+SHAPE ?= tetrahedron
+
 ASMFILES = $(wildcard asm/*.asm)
 OBJASMFILES = $(patsubst asm/%.asm,asm/%.o,$(ASMFILES)) a_draw.o
-OBJFILES = mainX.o basic_draw.o asmUtil.o
+OBJFILES = mainX.o projectionMatrix.o asmUtil.o $(SHAPE).o
 
 mainx: $(OBJFILES) asmUtil.o
 	$(CC) $(LDFLAGS) $(CFLAGS) $(OBJFILES) -o $@
