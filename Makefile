@@ -5,7 +5,7 @@ LD = ld.bfd
 CWARNINGS = -Wall -Wextra -Wpedantic -Wno-trigraphs
 INCLUDES = -I$(HOME)/dev/fstdlib/
 
-LDFLAGS = `pkg-config --libs xcb xcb-image` -lm -g
+LDFLAGS = `pkg-config --libs xcb xcb-image` -lm -lrt -g 
 CFLAGS = -std=c11 $(CWARNINGS) $(INCLUDES) -g -trigraphs
 
 NASMFLAGS = -felf64 -F dwarf -g

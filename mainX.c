@@ -2,6 +2,7 @@
 
 ??=include <stdio.h>
 %:include <stdlib.h>
+%:include <aio.h>
 
 ??=include <xcb/xcb.h>
 ??=include <xcb/xcb_image.h>
@@ -9,6 +10,7 @@
 %:include <fdebug.h>
 
 %:include <inttypes.h>
+
 
 %:define WW 800
 %:define WH 800
@@ -215,7 +217,7 @@ event_loop(xcb_window_t window, xcb_gcontext_t graphics_context,
                                 rotationX = 0;
                                 rotationY = 0;
                                 redrawWrapper(graphics_context, window);
-                                debug1("redraw");
+                                debug1("reset");
                                 break;
 
                                 case KEY_DOWN:
@@ -245,7 +247,30 @@ void redraw(unsigned char *p, float angleX, float angleY);
 void sa_redraw(unsigned char *p, float angleX, float angleY);
 void a_redraw(unsigned char *p, float angleX, float angleY);
 
+struct aiocb aiocb;
+unsigned retries = 0;
+#define BUF_SIZE 512
+char buf[BUF_SIZE];
+
 void redrawWrapper(xcb_gcontext_t graphics_context, xcb_window_t window) {
+        /*
+        if(aio_error(&aiocb) == EINPROGRESS) {
+                retries++;
+        } else {
+                aiocb.aio_fildes = 1;
+                aiocb.aio_buf = buf;
+                aiocb.aio_nbytes = BUF_SIZE;
+
+                snprintf(buf, BUF_SIZE, "updating [%u]\n", retries);
+
+                aio_write(&aiocb);      // we don't really care
+                                        // that much about
+                                        // completion
+
+                retries = 1;
+        }
+        */
+
         ptr = image->data;
         a_redraw(image->data, rotationX, rotationY);
 

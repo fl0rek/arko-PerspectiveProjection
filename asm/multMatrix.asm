@@ -18,7 +18,6 @@ a_multMatrix:
         movaps          xmm13, xmm9
         movaps          xmm14, xmm10
         movaps          xmm15, xmm11
-        
 ;extern a_transpose_loaded
 ;        call            a_transpose_loaded
         ;lhs in xmm12-15
